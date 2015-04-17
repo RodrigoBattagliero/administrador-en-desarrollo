@@ -8,7 +8,7 @@ class abstract DBAbstractModel {
 	private $db_host = "";
 	private $db_user = "";
 	private $db_pass = "";
-	protected $db_name = "";
+	private $db_name = "";
 	protected $db_query;
 	protected $db_rows = array();
 
@@ -55,8 +55,9 @@ class abstract DBAbstractModel {
 	// Ejecutar consulta del tipo: INSERT, DELETE, UPDATE
 	protected function execute_single_query(){
 		$this->set_connection();
-		$this->db_conex->query($this->DBquery);
+		$ok = $this->db_conex->query($this->DBquery);
 		$this->close_connection();
+		return $ok;
 	}
 
 	// Ejecutar consulta del tipo: SELECT
