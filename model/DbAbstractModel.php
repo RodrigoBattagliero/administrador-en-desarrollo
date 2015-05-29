@@ -133,7 +133,7 @@ abstract class DBAbstractModel {
 	*
 	* @return void
 	*/
-	protected function get_results_from_query(){
+	protected function rowsFromQuery(){
 		$this->setConnection();
 		$result = $this->dbConex->query($this->dbQuery);
 		if($result){
