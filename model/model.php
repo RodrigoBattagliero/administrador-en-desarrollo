@@ -1,79 +1,45 @@
 <?php 
 require_once 'db_abstract_model.php';
 
-class UsersModel extends DBAbstractModel {
+class Model extends DBAbstractModel {
 
-	// Nombre de la tabla
-	private $table;
-	// campos de tabla
-	private $id;
-	private $name;
-	private $last_name;
-	private $email;
+	/**
+	*
+	*/
+	protected $table;
 	// Variable para WHERE de consultas
-	private $where;
-	// Campos y validaciones.
-	private $fields;
-	private $validation;
+	protected $where;
+	// Campos de la tabla
+	protected $fields;
+	// validaciones para los tipos de datos de los campos
+	protected $validation;
 	// Campo para ordenar por defecto
-	private $order;
-
-	public function __construct(){
-
-		$this->table = 'users';
-		$this->id = null;
-		$this->name = null;
-		$this->last_name = null;
-		$this->email = null;
-		$this->where = ' 1';
-
-		$this->fields = ' id, name, last_name, email ';
-
-		$this->validation = array(
-				'id' => 'integer',
-				'name' => 'string',
-				'last_name' 'string',
-				'email' => 'email'
-			);
-
-		$this->order = ' name DESC ';
-
-	}
-
-	// definir variable $where para ejecutar
-	private function _set_where($data = array()){
-		$this->where = ' 1';
-		foreach($data as $key => $value)
-			$this->where .= ' AND '.$key.' = '.$value.'';
-	}
+	protected $order;
 
 	public function get($where_data = array()){
 		$this->_set_where($where_data);
-		$this->query =
+		$this->db_query =
 			' SELECT '.$this->fields.
 			' FROM '.$this->table.
 			' WHERE '.$this->where.
-			' ORDER BY '.$this->order.;
+			' ORDER BY '.$this->order;
 		$this->get_results_from_query();
 	}
 
 	public function set($data = array()){
-		$values = ' ';
-		foreach($data as $dato) 
-			// Escapo comillas simples para consulta
-			$values .= '\''.$dato.'\' ';
-		$this->query = 
+		$data = $this->_set_set($data);
+		$this->db_query = 
 			' INSERT INTO '
-			.$this->table.
+			.$this->table. '('.$data[0].')'.
 			' VALUES('
-			.$values.
+			.$data[1].
 			' )';
 		return $this->execute_single_query();
 	}
 
 	public function edit($data = array()){
 		$update = $this->_set_update($data = array());
-		$this->query = 
+		$this->db_query = 
 			' UPDATE '.$this->table.
 			' SET ' . $update .
 			' WHERE ' . $this->where;
@@ -82,11 +48,18 @@ class UsersModel extends DBAbstractModel {
 
 	public function delete($where_data = array()){
 		$this->_set_where($where_data);
-		$this->query = 
+		$this->db_query = 
 			'DELETE FROM '.$this->table.
 			' WHERE '.$this->where;
 		return $this->execute_single_query();
 
+	}
+
+	// definir variable $where para ejecutar
+	private function _set_where($data = array()){
+		$this->where = ' 1';
+		foreach($data as $key => $value)
+			$this->where .= ' AND '.$key.' = '.$value.'';
 	}
 
 	private function _set_update($data = array()){
@@ -104,8 +77,18 @@ class UsersModel extends DBAbstractModel {
 		return $update;
 	}
 
-
-
+	private function _set_set($data = array()){
+		$set  = array('','');
+		foreach ($data as $key => $value) {
+			$set[0] .= $key;
+			$set[1] .= '\''.$value.'\' ';
+			if(current($data) != end($data)){
+				$set[0] .= ', ';
+				$set[1] .= ', ';
+			}
+		}
+		return $set;
+	}
 
 }
 

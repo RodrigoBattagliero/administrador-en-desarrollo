@@ -1,71 +1,149 @@
 <?php 
-class abstract DBAbstractModel {
+abstract class DBAbstractModel {
 	
-	/*
-	Variables de operacion a BD.
+	/**
+	* 
+	* @var string Conexion a la BD
 	*/
-	private $db_conex = null;
-	private $db_host = "";
-	private $db_user = "";
-	private $db_pass = "";
-	private $db_name = "";
-	protected $db_query;
-	protected $db_rows = array();
+	private $dbConex = null;
 
-	/*
-	 Metodos abstractos para ser definidos en clases hijas.
-	 */
+	/**
+	* @var string Servidor de BD
+	*/
+	private static $dbHost = 'localhost';
 
-	// Traer objeto de clase donde se defina
+	/**
+	* @var string Usuario de BD
+	*/
+	private static  $dbUser = 'root';
+
+	/**
+	* @var string Contraseña de BD
+	*/
+	private static $dbPass = '';
+
+	/**
+	* @var string Nombre de la BD
+	*/
+	private static $dbName = 'administrator';
+
+	/**
+	* @var string Consulta qeu se ejecutara
+	*/	
+	protected $dbQuery;
+
+	/**
+	* @var array Filas devueltas de la consulta
+	*/
+	protected $dbRows = array();
+
+	/**
+	* Funcion abstracta para ser redefinida.
+	*
+	* Guardara las filas obtenidas de la consulta de la valiable $bdRows
+	*
+	* @return void
+	*/
 	abstract protected function get();
 
-	// Setear/guardar objeto de clase donde se defina
+	/**
+	* Funcion abstracta para ser redefinida.
+	*
+	* Guardara los datos en la BD.
+	*
+	* @return void
+	*/
 	abstract protected function set();
 
-	// Editar objeto de clase donde se defina
+	/**
+	* Funcion abstracta para ser redefinida.
+	*
+	* Guardara los datos en la BD.
+	*
+	* @return void
+	*/
 	abstract protected function edit();
 
-	// Borrar objeto de clase donde se defina
+	/**
+	* Funcion abstracta para ser redefinida.
+	*
+	* Guardara los datos en la BD.
+	*
+	* @return void
+	*/
 	abstract protected function delete();
 
-	/*
-	 Metodos generales. Los usan cualquier clase que herede.
-	 */
-
-	// Abrir conexion
-	private function open_connection(){
-		$this->conex = new mysqli(
-			self::$db_host,
-			self::$db_user,
-			self::$db_pass,
-			$this->db_name
+	/**
+	* Abre una nueva conexion
+	*
+	* Setea la variable $dbConex con una nueva conexion.
+	*
+	* @return void
+	*/
+	private function openConnection(){
+		$this->dbConex = new mysqli(
+				self::$dbHost,
+				self::$dbUser,
+				self::$dbPass,
+				self::$dbName
 			);
 	}
 
-	// Crear conexion
-	private function set_connection(){
-		if($this->db_conex === null) $this->open_connection();
+	/**
+	* Setea la conexion
+	*
+	* Si la conexion no esta abierta, crea una nueva.
+	*
+	* @return void
+	*/
+	private function setConnection(){
+		if($this->db_conex === null) $this->openConnection();
 	}
 
-	// Cerrar conexion
-	private function close_connection(){
-		if($this->db_conex === null) $this->db_conex->close();
+	/**
+	* Cierra la conexion
+	*
+	* @return void
+	*/
+	private function closeConnection(){
+		if($this->dbConex === null) $this->dbConex->close();
 	}
 
-	// Ejecutar consulta del tipo: INSERT, DELETE, UPDATE
-	protected function execute_single_query(){
-		$this->set_connection();
-		$ok = $this->db_conex->query($this->DBquery);
-		$this->close_connection();
+	/**
+	* Ejecuta una consulta simple de tipo INSERT, UPDATE, DELETE.
+	*
+	* La consulta que ejecuta se debe almacenar previamente en $dbQuery
+	*
+	* @return boolean
+	*/
+	protected function singleQuery(){
+		$this->setConnection();
+		$ok = $this->dbConex->query($this->dbQuery);
+		$this->closeConnection();
+		echo $this->dbQuery;
 		return $ok;
 	}
 
-	// Ejecutar consulta del tipo: SELECT
+	
+	/**
+	* Ejecuta una consulta de tipo SELECT
+	*
+	* La consulta que ejecuta se debe almacenar previamente en $dbQuery.
+	* El resultado se almacena en $dbRows
+	*
+	* @return void
+	*/
 	protected function get_results_from_query(){
-		$this->set_connection();
-		$result = $this->cone->query($this->db_query);
-		while($this->db_rows[] = $result->fetch_object());
-		$result->free();
+		$this->setConnection();
+		$result = $this->dbConex->query($this->dbQuery);
+		if($result){
+			while($this->dbRows[] = $result->fetch_object());
+			$result->free();
+		}
+		echo $this->dbQuery;
+		echo "<pre>";
+		print_r($this->dbQows);
+		echo "</pre>";
 	}
 }
 ?>
