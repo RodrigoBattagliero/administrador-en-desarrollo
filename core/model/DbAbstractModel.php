@@ -1,4 +1,7 @@
 <?php 
+
+namespace Core\Model\DBAbstractModel;
+
 abstract class DBAbstractModel {
 	
 	/**
@@ -20,12 +23,12 @@ abstract class DBAbstractModel {
 	/**
 	* @var string Contraseña de BD
 	*/
-	private static $dbPass = '';
+	private static $dbPass = 'rodrigo';
 
 	/**
 	* @var string Nombre de la BD
 	*/
-	private static $dbName = 'administrator';
+	private static $dbName = 'newadmin';
 
 	/**
 	* @var string Consulta qeu se ejecutara
@@ -81,7 +84,7 @@ abstract class DBAbstractModel {
 	* @return void
 	*/
 	private function openConnection(){
-		$this->dbConex = new mysqli(
+		$this->dbConex = new \mysqli(
 				self::$dbHost,
 				self::$dbUser,
 				self::$dbPass,
@@ -97,7 +100,7 @@ abstract class DBAbstractModel {
 	* @return void
 	*/
 	private function setConnection(){
-		if($this->db_conex === null) $this->openConnection();
+		if($this->dbConex === null) $this->openConnection();
 	}
 
 	/**
@@ -136,14 +139,12 @@ abstract class DBAbstractModel {
 	protected function rowsFromQuery(){
 		$this->setConnection();
 		$result = $this->dbConex->query($this->dbQuery);
-		if($result){
-			while($this->dbRows[] = $result->fetch_object());
+		if($result->num_rows > 0){
+			while($row = $result->fetch_object()){
+				$this->dbRows[] = $row;
+			}
 			$result->free();
 		}
-		echo $this->dbQuery;
-		echo "<pre>";
-		print_r($this->dbQows);
-		echo "</pre>";
 	}
 }
 ?>

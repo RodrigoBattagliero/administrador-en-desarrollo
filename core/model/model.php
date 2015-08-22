@@ -1,7 +1,9 @@
 <?php 
+namespace Core\Model\Model;
+
 require_once 'DbAbstractModel.php';
 
-class Model extends DBAbstractModel {
+class Model extends \Core\Model\DBAbstractModel\DBAbstractModel {
 
 	/**
 	* @var string Nombre de la tabla.
@@ -131,7 +133,7 @@ class Model extends DBAbstractModel {
 	private function _setWhere($data = array()){
 		$this->where = ' 1';
 		foreach($data as $key => $value)
-			$this->where .= ' AND '.$key.' = '.$value.'';
+			$this->where .= ' AND '.$key.' = \''.$value.'\'';
 	}
 
 	private function _setUpdate($data = array()){

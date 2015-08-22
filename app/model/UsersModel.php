@@ -1,5 +1,9 @@
 <?php 
-require_once 'Model.php';
+namespace App\Model\UsersModel;
+
+use Core\Model\Model\Model as Model;
+
+require_once '/var/www/AdminNew/administrador-en-desarrollo/core/model/model.php';
 
 class UsersModel extends Model {
 
